@@ -1,5 +1,7 @@
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Stack;
 
 class Graph {
     private int V;
@@ -18,8 +20,10 @@ class Graph {
     }
 
     void BFS(int start) {
+        System.out.println();
+
         boolean visited[] = new boolean[V];
-        LinkedList<Integer> queue = new LinkedList<>();
+        Queue<Integer> queue = new LinkedList<>();
 
         visited[start] = true;
         queue.add(start);
@@ -42,6 +46,33 @@ class Graph {
         System.out.println();
     }
 
+    void DFS(int top) {
+        System.out.println();
+
+        boolean visited[] = new boolean[V];
+        Stack<Integer> stack = new Stack<>();
+
+        visited[top] = true;
+        stack.add(top);
+
+        while (!stack.isEmpty()) {
+            top = stack.pop();
+            System.out.print(top + " ");
+            
+            Iterator<Integer> i = adj[top].listIterator();
+            while (i.hasNext()) {
+                int n = i.next();
+
+                if (!visited[n]) {
+                    visited[n] = true;
+                    stack.add(n);
+                }
+            }
+        }
+
+        System.out.println();
+    }
+
     public static void main(String[] args) {
         Graph g = new Graph(4);
  
@@ -53,5 +84,6 @@ class Graph {
         g.addEdge(3, 3);
 
         g.BFS(2);
+        g.DFS(2);
     }
 }
