@@ -5,7 +5,7 @@ import java.util.Stack;
 
 class Graph {
     private int V;
-    private LinkedList<Integer> adj[];
+    private LinkedList<Integer>[] adj;
 
     Graph(int v) {
         V = v;
