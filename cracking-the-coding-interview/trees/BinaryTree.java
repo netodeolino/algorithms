@@ -84,6 +84,104 @@ class BinaryTree {
         }
     }
 
+    void printInOrder(Node root) {
+        if (root == null) return;
+
+        printInOrder(root.left);
+        System.out.println(root.data);
+        printInOrder(root.right);
+    }
+
+    void printPreOrder(Node root) {
+        if (root == null) return;
+
+        System.out.println(root.data);
+
+        printInOrder(root.left);
+        printInOrder(root.right);
+    }
+
+    void printPosOrder(Node root) {
+        if (root == null) return;
+
+        printInOrder(root.left);
+        printInOrder(root.right);
+        
+        System.out.println(root.data);
+    }
+
+    void deleteDeepest(Node root, Node delete) {
+        Queue<Node> queue = new LinkedList<Node>();
+        queue.add(root);
+        
+        while (!queue.isEmpty()) {
+            Node temp = queue.poll();
+            
+            if (temp == delete) {
+                temp = null;
+                return;
+            }
+
+            if (temp.right != null) {
+                if (temp.right == delete) {
+                    temp.right = null;
+                    return;
+                } else {
+                    queue.add(temp.right);
+                }
+            }
+        
+            if (temp.left != null) {
+                if (temp.left == delete) {
+                    temp.left = null;
+                    return;
+                } else {
+                    queue.add(temp.left);
+                }
+            }
+        }
+    }
+
+    void delete(Node root, int dataValue) {
+        if (root == null) return;
+
+        if (root.left == null && root.right == null) {
+            if (root.data == dataValue) {
+                root = null;
+                return;
+            } else {
+                return;
+            }
+        }
+
+        Queue<Node> queue = new LinkedList<Node>();
+        queue.add(root);
+        
+        Node temp = null, nodeValue = null;
+
+        while (!queue.isEmpty()) {
+            temp = queue.poll();
+
+            if (temp.data == dataValue) {
+                nodeValue = temp;
+            }
+
+            if (temp.left != null) {
+                queue.add(temp.left);
+            }
+
+            if (temp.right != null) {
+                queue.add(temp.right);
+            }
+        }
+
+        if (nodeValue != null) {
+            int x = temp.data;
+            deleteDeepest(root, temp);
+            nodeValue.data = x;
+        }
+    }
+
     public static void main(String[] args) {
         BinaryTree tree = new BinaryTree();
 
@@ -117,6 +215,24 @@ class BinaryTree {
 
         System.out.println("------PRINT LEVEL ORDER-------");
         tree.printLevelOrder(tree.root);
+
+        System.out.println("------------------------------");
+        System.out.println("------------------------------");
+
+        BinaryTree treeToDelete = new BinaryTree();
+        treeToDelete.root = new Node(13);
+        treeToDelete.root.left = new Node(12);
+        treeToDelete.root.right = new Node(10);
+        treeToDelete.root.left.left = new Node(4);
+        treeToDelete.root.left.right = new Node(19);
+        treeToDelete.root.right.left = new Node(16);
+        treeToDelete.root.right.right = new Node(9);
+
+        treeToDelete.delete(treeToDelete.root, 12);
+
+        treeToDelete.printLevelOrder(treeToDelete.root);
+
+        treeToDelete.printInOrder(treeToDelete.root);
     }
     
 }
