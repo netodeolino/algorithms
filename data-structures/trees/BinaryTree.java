@@ -1,32 +1,21 @@
+import java.util.LinkedList;
+import java.util.Queue;
+
 public class BinaryTree {
 
-    public class Node {
-        int key;
-        Node left, right;
-    
-        public Node(int key) {
-            this.key = key;
-            this.left = this.right = null;
-        }
-    }
-
-    Node root;
+    private Node root;
 
     public void add(int key) {
         root = add(root, key);
     }
 
     private Node add(Node root, int key) {
-        if (root == null) {
-            root = new Node(key);
-            return root;
-        }
-        if (key <= root.key) {
+        if (root == null) return new Node(key);
+        if (key < root.key) {
             root.left = add(root.left, key);
         } else {
             root.right = add(root.right, key);
         }
-
         return root;
     }
 
@@ -42,114 +31,106 @@ public class BinaryTree {
         }
     }
 
+    public void printInLevels() {
+        if (root == null) return;
+
+        Queue<Node> queue = new LinkedList<>();
+        queue.add(root);
+
+        while (!queue.isEmpty()) {
+            Node current = queue.poll();
+            System.out.println(current.key);
+
+            if (current.left != null) queue.add(current.left);
+            if (current.right != null) queue.add(current.right);
+        }
+    }
+
     public void delete(int key) {
         root = delete(root, key);
     }
 
     private Node delete(Node root, int key) {
-        if (root == null) return root;
-        
+        if (root == null) return null;
+
         if (key < root.key) {
             root.left = delete(root.left, key);
         } else if (key > root.key) {
             root.right = delete(root.right, key);
         } else {
-            if (root.left == null && root.right == null) {
-                root = null;
-            } else if (root.left == null) {
-                root = root.right;
-            } else if (root.right == null) {
-                root = root.left;
-            } else {
-                Node temp = findMin(root.right);
-                root.key = temp.key;
-                root.right = delete(temp.right, temp.key);
+            if (root.left == null && root.right == null) root = null;
+            else if (root.left == null) root = root.right;
+            else if (root.right == null) root = root.left;
+            else {
+                Node tempRoot = findMin(root.right);
+                root.key = tempRoot.key;
+                root.right = delete(root.right, tempRoot.key);
             }
         }
 
         return root;
     }
 
-    public Node findMin(Node root) {
+    private Node findMin(Node root) {
         Node current = root;
-
         while (current.left != null) {
             current = current.left;
         }
-
         return current;
     }
 
-    public int height() {
-        return height(root);
-    }
-
-    public int height(Node root) {
-        if (root == null) return -1;
-
-        int left = height(root.left);
-        int right = height(root.right);
-
-        return Math.max(left, right) + 1;
-    }
-
-    public void printLevelOrder() {
-        int height = height();
-        for (int i = 0; i <= height; i++) {
-            printCurrentLevel(root, i);
-        }
-    }
-
-    public void printCurrentLevel(Node root, int level) {
-        if (root == null) return;
-
-        if (level == 0) {
-            System.out.println(root.key);
-        }
-
-        if (level > 0) {
-            printCurrentLevel(root.left, level-1);
-            printCurrentLevel(root.right, level-1);
-        }
-    }
-
-    public int lowestCommonAncestor(Node nodeOne, Node nodeTwo) {
-        Node lca = LCA(root, nodeOne, nodeTwo);
+    public int LCA(int one, int two) {
+        Node lca = LCA(root, one, two);
         return lca.key;
     }
 
-    private Node LCA(Node root, Node nodeOne, Node nodeTwo) {
+    private Node LCA(Node root, int one, int two) {
         if (root == null) return null;
+        if (root.key == one || root.key == two) return root;
 
-        if (root.key == nodeOne.key || root.key == nodeTwo.key) return root;
-
-        Node left = LCA(root.left, nodeOne, nodeTwo);
-        Node right = LCA(root.right, nodeOne, nodeTwo);
-
-        if (left == null && right == null) return null;
+        Node left = LCA(root.left, one, two);
+        Node right = LCA(root.right, one, two);
 
         if (left != null && right != null) return root;
 
-        return left != null ? left : right;
+        return (left != null) ? left : right;
     }
 
-    public static void main(String[] args) {
-        BinaryTree bTree = new BinaryTree();
-
-        bTree.add(11);
-        bTree.add(9);
-        bTree.add(8);
-        bTree.add(10);
-        bTree.add(12);
-
-        // bTree.delete(9);
-
-        // System.out.println(bTree.height());
-
-        // bTree.printLevelOrder();
-
-        // System.out.println(bTree.lowestCommonAncestor(bTree.root.left.left, bTree.root));
-
-        // bTree.printInOrder();
+    public int sumValues() {
+        return sumValues(root);
     }
+
+    private int sumValues(Node root) {
+        if (root == null) return 0;
+        return root.key + sumValues(root.left) + sumValues(root.right);
+    }
+
+    public int minValue() {
+        return (int) minValue(root);
+    }
+
+    private double minValue(Node root) {
+        if (root == null) return Double.POSITIVE_INFINITY;
+
+        double minLeft = minValue(root.left);
+        double minRight = minValue(root.right);
+
+        double minValue = Math.min(minLeft, minRight);
+
+        return minValue < root.key ? minValue : root.key;
+    }
+
+    public int maxRootToLeafPathSum() {
+        return maxRootToLeafPathSum(root);
+    }
+
+    private int maxRootToLeafPathSum(Node root) {
+        if (root == null) return 0;
+
+        int sumLeft = maxRootToLeafPathSum(root.left);
+        int sumRight = maxRootToLeafPathSum(root.right);
+
+        return Math.max(sumLeft, sumRight) + root.key;
+    }
+
 }
