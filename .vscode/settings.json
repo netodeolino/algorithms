@@ -2,6 +2,6 @@
     "java.project.sourcePaths": [
         "leetcode",
         "data-structures/trees",
-        "interviews/max-product-value"
+        "interviews"
     ]
 }
